@@ -115,6 +115,11 @@ public class BaseFragment extends Fragment {
     }
 
     private void createAdater(int height) {
+
+        LoggerManager.getLogger(getClass()).debug(mRecyclerView.getAdapter());
+
+        if (mRecyclerView.getAdapter() != null) return;
+
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(new Adapter(getContext(), height, MediaUtils.getTrackList(getActivity())));
