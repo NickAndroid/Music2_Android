@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:bbn_itemColorActive="#FFFFFFFF"
+    app:bbn_itemColorInactive="#7FFFFFFF"
+    app:bbn_badgeColor="#FFCC0000"
+    app:bbn_rippleColor="#33ffffff">
+
+    <item
+        android:id="@+id/tab_tracks"
+        android:color="@color/tab_tracks"
+        android:icon="@drawable/ic_library_music_white_24dp"
+        android:title="@string/tab_tracks" />
+    <item
+        android:id="@+id/tab_fav"
+        android:color="@color/tab_fav"
+        android:icon="@drawable/ic_favorite_white_24dp"
+        android:title="@string/tab_fav" />
+    <item
+        android:id="@+id/tab_album"
+        android:color="@color/tab_album"
+        android:icon="@drawable/ic_album_white_24dp"
+        android:title="@string/tab_albums" />
+    <item
+        android:id="@+id/tab_list"
+        android:color="@color/tab_list"
+        android:icon="@drawable/ic_queue_music_white_24dp"
+        android:title="@string/tab_list" />
+
+</menu>

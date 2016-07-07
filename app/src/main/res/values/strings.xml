@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Music</string>
+
+    <string name="tab_tracks">Tracks</string>
+    <string name="tab_fav">Fav</string>
+    <string name="tab_albums">Albums</string>
+    <string name="tab_list">Lists</string>
+
+</resources>
