@@ -2,7 +2,6 @@ package app.dev.nick.music.content.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.graphics.ColorMatrixColorFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -13,29 +12,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nick.scalpel.Scalpel;
+import com.nick.scalpel.annotation.binding.FindView;
 import com.nick.scalpel.annotation.request.RequirePermission;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import app.dev.nick.music.BuildConfig;
 import app.dev.nick.music.FragmentController;
 import app.dev.nick.music.R;
-import app.dev.nick.music.content.fragment.BaseFragment;
-import app.dev.nick.music.content.fragment.HeadlessFragment;
-import app.dev.nick.music.content.fragment.HelloFragment;
-import app.dev.nick.music.content.fragment.SettingsFragment;
+import app.dev.nick.music.annotation.GetLogger;
 import app.dev.nick.music.content.fragment.TracksFragment;
 import app.dev.nick.music.utils.ColorUtils;
+import dev.nick.logger.Logger;
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 @RequirePermission(permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET})
 public class MainActivity extends BaseActivity implements BottomNavigation.OnMenuItemSelectionListener {
 
-    Toolbar toolbar;
-    FloatingActionButton floatingActionButton;
+    @FindView(id = R.id.toolbar)
+    Toolbar mToolbar;
+    @FindView(id = R.id.fab)
+    FloatingActionButton mFab;
 
     int[] mColors = new int[]{
             R.color.tab_tracks,
@@ -44,20 +42,25 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
             R.color.tab_list
     };
 
-    FragmentController controller;
+    FragmentController mController;
+
+    @GetLogger
+    Logger mLogger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        BottomNavigation.DEBUG = BuildConfig.DEBUG;
-
         setContentView(getActivityLayoutResId());
+        initializeUI(savedInstanceState);
+    }
 
-        Scalpel.getInstance().wire(this);
+    protected int getActivityLayoutResId() {
+        return R.layout.activity_main;
+    }
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    protected void initializeUI(final Bundle savedInstanceState) {
+
+        setSupportActionBar(mToolbar);
 
         final int statusbarHeight = getStatusBarHeight();
         final boolean translucentStatus = hasTranslucentStatusBar();
@@ -68,28 +71,20 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) coordinatorLayout.getLayoutParams();
             params.topMargin = -statusbarHeight;
 
-            params = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+            params = (ViewGroup.MarginLayoutParams) mToolbar.getLayoutParams();
             params.topMargin = statusbarHeight;
         }
 
-        initializeUI(savedInstanceState);
-    }
-
-    protected int getActivityLayoutResId() {
-        return R.layout.activity_main;
-    }
-
-    protected void initializeUI(final Bundle savedInstanceState) {
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
-        assert floatingActionButton != null;
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        assert mFab != null;
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
 
-        floatingActionButton.setOnLongClickListener(new View.OnLongClickListener() {
+        mFab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 return false;
@@ -97,31 +92,33 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
         });
 
         List<Fragment> fragments = new ArrayList<>(4);
-        fragments.add(new HeadlessFragment());
         fragments.add(new TracksFragment());
-        fragments.add(new SettingsFragment());
-        fragments.add(new HelloFragment());
+        fragments.add(new TracksFragment());
+        fragments.add(new TracksFragment());
+        fragments.add(new TracksFragment());
 
-        controller = new FragmentController(getSupportFragmentManager(), fragments);
+        mController = new FragmentController(getSupportFragmentManager(), fragments);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        controller.setDefaultIndex(0);
-        controller.setCurrent(0);
+        mController.setDefaultIndex(0);
+        mController.setCurrent(0);
     }
 
     @Override
     public void onMenuItemSelect(final int itemId, final int position) {
+        mLogger.funcEnter();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                controller.setCurrent(position);
+                mController.setCurrent(position);
+                int themeColor = getResources().getColor(mColors[position]);
+                mToolbar.setBackgroundColor(themeColor);
+                mFab.setColorFilter(themeColor);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getWindow().setStatusBarColor(ColorUtils.colorBurn(getResources().getColor(mColors[position])));
-                    toolbar.setBackgroundColor(getResources().getColor(mColors[position]));
-                    floatingActionButton.setColorFilter(getResources().getColor(mColors[position]));
+                    getWindow().setStatusBarColor(ColorUtils.colorBurn(themeColor));
                 }
             }
         });
@@ -129,6 +126,7 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
 
     @Override
     public void onMenuItemReselect(@IdRes final int itemId, final int position) {
-        ((BaseFragment) controller.getCurrent()).scrollToTop();
+        mLogger.funcEnter();
+        ((TracksFragment) mController.getCurrent()).scrollToTop();
     }
 }

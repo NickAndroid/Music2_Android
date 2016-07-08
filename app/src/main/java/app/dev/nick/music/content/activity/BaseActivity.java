@@ -1,16 +1,18 @@
 package app.dev.nick.music.content.activity;
 
 import android.annotation.TargetApi;
+import android.graphics.Typeface;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
+import com.nick.scalpel.ScalpelAutoActivity;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import app.dev.nick.music.R;
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
-public abstract class BaseActivity extends AppCompatActivity implements BottomNavigation.OnMenuItemSelectionListener {
+public abstract class BaseActivity extends ScalpelAutoActivity implements BottomNavigation.OnMenuItemSelectionListener {
+
     private SystemBarTintManager mSystemBarTint;
     private boolean mTranslucentStatus;
     private boolean mTranslucentStatusSet;
@@ -24,6 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BottomNa
         mBottomNavigation = (BottomNavigation) findViewById(R.id.bottom_navigation);
         if (null != mBottomNavigation) {
             mBottomNavigation.setOnMenuItemClickListener(this);
+            mBottomNavigation.setDefaultTypeface(Typeface.createFromAsset(getAssets(), "RobotoLight.ttf"));
         }
     }
 

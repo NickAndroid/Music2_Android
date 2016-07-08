@@ -30,5 +30,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.0.0'
     compile 'dev.nick:imageloader:0.5'
     compile 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:1.0.7'
-    compile 'com.nick.scalpel:scalpel:1.0.4'
+    compile 'com.nick.scalpel:scalpel:1.0.5'
 }
