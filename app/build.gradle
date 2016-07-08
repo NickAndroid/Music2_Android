@@ -31,4 +31,5 @@ dependencies {
     compile 'dev.nick:imageloader:0.5'
     compile 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:1.0.7'
     compile 'com.nick.scalpel:scalpel:1.0.5'
+    compile 'dev.nick:eventbus:0.3'
 }
