@@ -2,9 +2,13 @@ package app.dev.nick.music.content.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,13 +16,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.nick.scalpel.annotation.binding.BindService;
 import com.nick.scalpel.annotation.binding.FindView;
 import com.nick.scalpel.annotation.request.RequirePermission;
+import com.nick.scalpel.core.binding.ThisThatNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.dev.nick.music.FragmentController;
+import app.dev.nick.music.IPlaybackService;
 import app.dev.nick.music.R;
 import app.dev.nick.music.annotation.GetLogger;
 import app.dev.nick.music.content.fragment.TracksFragment;
@@ -27,8 +34,9 @@ import dev.nick.logger.Logger;
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-@RequirePermission(permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET})
-public class MainActivity extends BaseActivity implements BottomNavigation.OnMenuItemSelectionListener {
+@RequirePermission(permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET}, requestCode = 100)
+public class TabContainerActivity extends BaseActivity implements BottomNavigation.OnMenuItemSelectionListener,
+        BindService.Callback {
 
     @FindView(id = R.id.toolbar)
     Toolbar mToolbar;
@@ -46,6 +54,13 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
 
     @GetLogger
     Logger mLogger;
+
+    @BindService(action = "dev.nick.app.music.action.START_MEDIA_PLAYBACK_SERVICE",
+            pkg = "app.dev.nick.music",
+            startService = true,
+            autoUnbind = true,
+            callback = ThisThatNull.THIS)
+    IPlaybackService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +106,16 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
             }
         });
 
+        initPages();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        initPages();
+    }
+
+    private void initPages() {
         List<Fragment> fragments = new ArrayList<>(4);
         fragments.add(new TracksFragment());
         fragments.add(new TracksFragment());
@@ -128,5 +153,15 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
     public void onMenuItemReselect(@IdRes final int itemId, final int position) {
         mLogger.funcEnter();
         ((TracksFragment) mController.getCurrent()).scrollToTop();
+    }
+
+    @Override
+    public void onServiceBound(ComponentName name, ServiceConnection connection, Intent intent) {
+        mLogger.funcEnter();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        mLogger.funcEnter();
     }
 }

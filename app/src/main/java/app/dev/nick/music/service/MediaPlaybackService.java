@@ -1,25 +1,53 @@
 package app.dev.nick.music.service;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 
 import com.nick.scalpel.ScalpelAutoService;
+import com.nick.scalpel.annotation.binding.AutoWired;
+import com.nick.scalpel.annotation.binding.WorkerThreadHandler;
 import com.nick.scalpel.annotation.opt.RetrieveBean;
+import com.nick.scalpel.core.binding.ThisThatNull;
 
 import app.dev.nick.music.IPlaybackService;
+import app.dev.nick.music.annotation.GetLogger;
 import app.dev.nick.music.model.MediaTrack;
+import dev.nick.logger.Logger;
 
-public class MediaPlaybackService extends ScalpelAutoService {
+public class MediaPlaybackService extends ScalpelAutoService implements Handler.Callback{
 
     @RetrieveBean
     ServiceStub mStub;
+
+    @AutoWired
+    AudioManager mAudioManager;
+
+    @WorkerThreadHandler(callback = ThisThatNull.THIS)
+    Handler mWorkHandler;
+
+    @GetLogger
+    Logger mLogger;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return mStub;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mLogger.funcEnter();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public boolean handleMessage(Message message) {
+        return false;
     }
 
     class ServiceStub extends IPlaybackService.Stub {
