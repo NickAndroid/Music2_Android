@@ -29,9 +29,13 @@ import app.dev.nick.music.IPlaybackService;
 import app.dev.nick.music.R;
 import app.dev.nick.music.annotation.GetLogger;
 import app.dev.nick.music.content.fragment.TracksFragment;
+import app.dev.nick.music.control.TabAction;
 import app.dev.nick.music.control.UserAction;
 import app.dev.nick.music.utils.ColorUtils;
+import dev.nick.eventbus.Event;
 import dev.nick.eventbus.EventBus;
+import dev.nick.eventbus.annotation.Events;
+import dev.nick.eventbus.annotation.ReceiverMethod;
 import dev.nick.logger.Logger;
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
@@ -146,6 +150,7 @@ public class TabContainerActivity extends BaseActivity implements BottomNavigati
             @Override
             public void run() {
                 mController.setCurrent(position);
+                setTitle(mController.getCurrent().getClass().getSimpleName());
                 int themeColor = getResources().getColor(mColors[position]);
                 mToolbar.setBackgroundColor(themeColor);
                 mFab.setColorFilter(themeColor);

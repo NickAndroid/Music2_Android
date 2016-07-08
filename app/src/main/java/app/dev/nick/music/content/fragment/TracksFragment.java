@@ -1,5 +1,6 @@
 package app.dev.nick.music.content.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -24,8 +25,11 @@ import app.dev.nick.music.MyApp;
 import app.dev.nick.music.R;
 import app.dev.nick.music.annotation.GetLogger;
 import app.dev.nick.music.content.activity.BaseActivity;
+import app.dev.nick.music.control.TabAction;
 import app.dev.nick.music.model.Track;
 import app.dev.nick.music.utils.MediaUtils;
+import dev.nick.eventbus.Event;
+import dev.nick.eventbus.EventBus;
 import dev.nick.imageloader.ImageLoader;
 import dev.nick.imageloader.display.DisplayOption;
 import dev.nick.imageloader.display.animator.FadeInImageAnimator;
@@ -43,6 +47,11 @@ public class TracksFragment extends ScalpelAutoFragment {
     Logger mLogger;
 
     static String mArtworkUri = "content://media/external/audio/albumart";
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
 
     @Nullable
     @Override
