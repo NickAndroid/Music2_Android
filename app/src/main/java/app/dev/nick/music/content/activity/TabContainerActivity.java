@@ -29,7 +29,9 @@ import app.dev.nick.music.IPlaybackService;
 import app.dev.nick.music.R;
 import app.dev.nick.music.annotation.GetLogger;
 import app.dev.nick.music.content.fragment.TracksFragment;
+import app.dev.nick.music.control.UserAction;
 import app.dev.nick.music.utils.ColorUtils;
+import dev.nick.eventbus.EventBus;
 import dev.nick.logger.Logger;
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
@@ -95,18 +97,23 @@ public class TabContainerActivity extends BaseActivity implements BottomNavigati
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                onUserAction(UserAction.PLAY);
             }
         });
 
         mFab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                return false;
+                onUserAction(UserAction.NEXT);
+                return true;
             }
         });
 
         initPages();
+    }
+
+    private void onUserAction(int action) {
+        EventBus.getInstance().publishEmptyEvent(action);
     }
 
     @Override

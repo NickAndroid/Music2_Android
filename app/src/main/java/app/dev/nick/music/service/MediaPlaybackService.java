@@ -16,10 +16,15 @@ import com.nick.scalpel.core.binding.ThisThatNull;
 
 import app.dev.nick.music.IPlaybackService;
 import app.dev.nick.music.annotation.GetLogger;
+import app.dev.nick.music.control.UserAction;
 import app.dev.nick.music.model.MediaTrack;
+import dev.nick.eventbus.Event;
+import dev.nick.eventbus.EventBus;
+import dev.nick.eventbus.annotation.Events;
+import dev.nick.eventbus.annotation.ReceiverMethod;
 import dev.nick.logger.Logger;
 
-public class MediaPlaybackService extends ScalpelAutoService implements Handler.Callback{
+public class MediaPlaybackService extends ScalpelAutoService implements Handler.Callback {
 
     @RetrieveBean
     ServiceStub mStub;
@@ -40,6 +45,12 @@ public class MediaPlaybackService extends ScalpelAutoService implements Handler.
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        EventBus.getInstance().subscribe(this);
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mLogger.funcEnter();
         return super.onStartCommand(intent, flags, startId);
@@ -48,6 +59,18 @@ public class MediaPlaybackService extends ScalpelAutoService implements Handler.
     @Override
     public boolean handleMessage(Message message) {
         return false;
+    }
+
+
+    @ReceiverMethod
+    @Events({UserAction.NEXT, UserAction.PLAY})
+    public void onUserAction(Event event) {
+        int action = event.getEventType();
+        mLogger.debug("action:" + action);
+        switch (action) {
+            default:
+                break;
+        }
     }
 
     class ServiceStub extends IPlaybackService.Stub {

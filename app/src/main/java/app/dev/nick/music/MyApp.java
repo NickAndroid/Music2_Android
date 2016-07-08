@@ -17,6 +17,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import app.dev.nick.music.annotation.GetLogger;
+import dev.nick.eventbus.EventBus;
 import dev.nick.imageloader.ImageLoader;
 import dev.nick.imageloader.LoaderConfig;
 import dev.nick.imageloader.cache.CachePolicy;
@@ -28,7 +29,6 @@ import static com.nick.scalpel.core.utils.ReflectionUtils.getField;
 import static com.nick.scalpel.core.utils.ReflectionUtils.makeAccessible;
 import static com.nick.scalpel.core.utils.ReflectionUtils.setField;
 
-@ContextConfiguration(xmlRes = 0)
 public class MyApp extends ScalpelApplication {
     @Override
     public void onCreate() {
@@ -37,6 +37,8 @@ public class MyApp extends ScalpelApplication {
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectAll()
                 .build());
+
+        EventBus.create(this).setDebuggable(BuildConfig.DEBUG);
 
         ImageLoader.init(this, new LoaderConfig.Builder()
                 .cachePolicy(CachePolicy.DEFAULT_CACHE_POLICY)
