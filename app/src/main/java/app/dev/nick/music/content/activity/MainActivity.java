@@ -2,6 +2,7 @@ package app.dev.nick.music.content.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.graphics.ColorMatrixColorFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -34,6 +35,7 @@ import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 public class MainActivity extends BaseActivity implements BottomNavigation.OnMenuItemSelectionListener {
 
     Toolbar toolbar;
+    FloatingActionButton floatingActionButton;
 
     int[] mColors = new int[]{
             R.color.tab_tracks,
@@ -78,12 +80,19 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
     }
 
     protected void initializeUI(final Bundle savedInstanceState) {
-        final FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         assert floatingActionButton != null;
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+            }
+        });
+
+        floatingActionButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return false;
             }
         });
 
@@ -105,13 +114,17 @@ public class MainActivity extends BaseActivity implements BottomNavigation.OnMen
 
     @Override
     public void onMenuItemSelect(final int itemId, final int position) {
-
-        controller.setCurrent(position);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ColorUtils.colorBurn(getResources().getColor(mColors[position])));
-            toolbar.setBackgroundColor(getResources().getColor(mColors[position]));
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                controller.setCurrent(position);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getWindow().setStatusBarColor(ColorUtils.colorBurn(getResources().getColor(mColors[position])));
+                    toolbar.setBackgroundColor(getResources().getColor(mColors[position]));
+                    floatingActionButton.setColorFilter(getResources().getColor(mColors[position]));
+                }
+            }
+        });
     }
 
     @Override

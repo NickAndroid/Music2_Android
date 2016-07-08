@@ -1,6 +1,5 @@
 package app.dev.nick.music.content.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -19,6 +18,7 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 import java.io.File;
 import java.util.List;
 
+import app.dev.nick.music.MyApp;
 import app.dev.nick.music.R;
 import app.dev.nick.music.content.activity.BaseActivity;
 import app.dev.nick.music.model.Track;
@@ -94,15 +94,13 @@ public class BaseFragment extends Fragment {
 
                         if (scrollable) {
                             totalHeight = navigationHeight;
-                            params.bottomMargin -= navigationHeight;
                         } else {
                             totalHeight = navigation.getNavigationHeight();
                         }
-
-                        createAdater(totalHeight);
+                        createAdapter(totalHeight);
                     } else {
                         params.bottomMargin -= navigationHeight;
-                        createAdater(navigationHeight);
+                        createAdapter(navigationHeight);
                     }
                     mRecyclerView.requestLayout();
                 }
@@ -110,11 +108,11 @@ public class BaseFragment extends Fragment {
         } else {
             final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mRecyclerView.getLayoutParams();
             params.bottomMargin -= navigationHeight;
-            createAdater(navigationHeight);
+            createAdapter(navigationHeight);
         }
     }
 
-    private void createAdater(int height) {
+    private void createAdapter(int height) {
 
         LoggerManager.getLogger(getClass()).debug(mRecyclerView.getAdapter());
 
@@ -122,7 +120,7 @@ public class BaseFragment extends Fragment {
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mRecyclerView.setAdapter(new Adapter(getContext(), height, MediaUtils.getTrackList(getActivity())));
+        mRecyclerView.setAdapter(new Adapter(height, MediaUtils.getTrackList(getActivity())));
     }
 
     public void scrollToTop() {
@@ -130,28 +128,32 @@ public class BaseFragment extends Fragment {
     }
 
     private class Adapter extends RecyclerView.Adapter<TwoLinesViewHolder> {
+
         private final int navigationHeight;
         private final List<Track> data;
 
-        public Adapter(final Context context, final int navigationHeight, List<Track> data) {
+        public Adapter(final int navigationHeight, List<Track> data) {
             this.navigationHeight = navigationHeight;
             this.data = data;
+            LoggerManager.getLogger(MyApp.class).debug("navigationHeight:" + navigationHeight);
         }
 
         @Override
         public TwoLinesViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
             final View view = LayoutInflater.from(getContext()).inflate(R.layout.simple_card_item, parent, false);
-            final TwoLinesViewHolder holder = new TwoLinesViewHolder(view);
-            return holder;
+            return new TwoLinesViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(final TwoLinesViewHolder holder, final int position) {
             if (position == getItemCount() - 1) {
+                LoggerManager.getLogger(MyApp.class).funcEnter();
                 ((ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams()).bottomMargin = holder.marginBottom + navigationHeight;
             } else {
                 ((ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams()).bottomMargin = holder.marginBottom;
             }
+
+
 
             final Track item = data.get(position);
             holder.title.setText(item.getTitle());
@@ -162,7 +164,7 @@ public class BaseFragment extends Fragment {
 
             ImageLoader.getInstance().displayImage(uri, holder.imageView,
                     new DisplayOption.Builder()
-                            .imageQuality(DisplayOption.ImageQuality.RAW)
+                            .imageQuality(DisplayOption.ImageQuality.FIT_VIEW)
                             .imageAnimator(new FadeInImageAnimator())
                             .build());
         }
@@ -186,6 +188,7 @@ public class BaseFragment extends Fragment {
             description = (TextView) itemView.findViewById(android.R.id.text1);
             imageView = (ImageView) itemView.findViewById(android.R.id.icon);
             marginBottom = ((ViewGroup.MarginLayoutParams) itemView.getLayoutParams()).bottomMargin;
+            LoggerManager.getLogger(MyApp.class).debug("marginBottom:" + marginBottom);
         }
     }
 }
